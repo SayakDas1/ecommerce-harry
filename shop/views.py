@@ -2,11 +2,9 @@ from django.shortcuts import render
 from .models import Product, Contact, Orders, OrderUpdate
 from math import ceil
 import json
-
-# Create your views here.
 from django.http import HttpResponse
 
-
+# Create your views here.
 def index(request):
     allProds = []
     catprods = Product.objects.values('category', 'id')
@@ -25,6 +23,7 @@ def about(request):
 
 
 def contact(request):
+    thank=False
     if request.method=="POST":
         name = request.POST.get('name', '')
         email = request.POST.get('email', '')
@@ -32,7 +31,8 @@ def contact(request):
         desc = request.POST.get('desc', '')
         contact = Contact(name=name, email=email, phone=phone, desc=desc)
         contact.save()
-    return render(request, 'shop/contact.html')
+        thank=True
+    return render(request, 'shop/contact.html', {'thank':thank})
 
 
 def tracker(request):
@@ -41,7 +41,6 @@ def tracker(request):
         email = request.POST.get('email', '')
         try:
             order = Orders.objects.filter(order_id=orderId, email=email)
-            print("OKAY!")
             print(Orders.objects.filter(order_id=orderId, email=email))
             if len(order)>0:
                 update = OrderUpdate.objects.filter(order_id=orderId)
